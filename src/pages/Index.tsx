@@ -1,32 +1,31 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchRecommendations } from "@/lib/api";
+import { fetchRecommendations, MODELS, type RecommendationModel } from "@/lib/api";
 import UserInput from "@/components/UserInput";
 import RecommendationGrid from "@/components/RecommendationGrid";
 import { useToast } from "@/components/ui/use-toast";
-
-const MODELS = ["collaborative", "content-based", "hybrid"];
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Index = () => {
   const [userId, setUserId] = useState<string>("");
+  const [activeModel, setActiveModel] = useState<RecommendationModel>(MODELS[0]);
   const { toast } = useToast();
 
   const { data: recommendations = [], isLoading } = useQuery({
-    queryKey: ["recommendations", userId],
+    queryKey: ["recommendations", userId, activeModel],
     queryFn: async () => {
       if (!userId) return [];
-      const results = await Promise.all(
-        MODELS.map(model => fetchRecommendations(userId, model))
-      );
-      return results.flat();
+      return fetchRecommendations(userId, activeModel);
     },
     enabled: !!userId,
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to fetch recommendations. Please try again.",
-        variant: "destructive",
-      });
+    meta: {
+      onError: () => {
+        toast({
+          title: "Error",
+          description: "Failed to fetch recommendations. Please try again.",
+          variant: "destructive",
+        });
+      },
     },
   });
 
@@ -36,7 +35,7 @@ const Index = () => {
 
   return (
     <div className="container py-8 mx-auto min-h-screen">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold tracking-tight mb-4">
             Recommendation Dashboard
@@ -49,10 +48,25 @@ const Index = () => {
         <UserInput onSubmit={handleSubmit} isLoading={isLoading} />
         
         {(recommendations.length > 0 || isLoading) && (
-          <RecommendationGrid
-            recommendations={recommendations}
-            isLoading={isLoading}
-          />
+          <div className="mt-8">
+            <Tabs defaultValue={MODELS[0]} onValueChange={(value) => setActiveModel(value as RecommendationModel)}>
+              <TabsList className="w-full flex flex-wrap justify-start gap-2">
+                {MODELS.map((model) => (
+                  <TabsTrigger key={model} value={model} className="flex-shrink-0">
+                    {model}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              {MODELS.map((model) => (
+                <TabsContent key={model} value={model}>
+                  <RecommendationGrid
+                    recommendations={recommendations}
+                    isLoading={isLoading}
+                  />
+                </TabsContent>
+              ))}
+            </Tabs>
+          </div>
         )}
       </div>
     </div>
