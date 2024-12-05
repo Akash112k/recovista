@@ -18,19 +18,19 @@ const UserInput = ({ onSubmit, isLoading }: UserInputProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-4 max-w-md mx-auto mb-8">
+    <form onSubmit={handleSubmit} className="flex gap-4 max-w-md mx-auto">
       <Input
         type="text"
         placeholder="Enter User ID"
         value={userId}
         onChange={(e) => setUserId(e.target.value)}
-        className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+        className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 rounded-lg h-12"
         disabled={isLoading}
       />
       <Button 
         type="submit" 
         disabled={!userId.trim() || isLoading}
-        className="min-w-[100px] transition-all duration-200"
+        className="min-w-[140px] h-12 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md"
       >
         {isLoading ? "Loading..." : "Get Recommendations"}
       </Button>
