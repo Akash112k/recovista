@@ -18,7 +18,7 @@ const UserInput = ({ onSubmit, isLoading }: UserInputProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-4 max-w-md mx-auto">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md mx-auto">
       <Input
         type="text"
         placeholder="Enter User ID"
@@ -30,7 +30,7 @@ const UserInput = ({ onSubmit, isLoading }: UserInputProps) => {
       <Button 
         type="submit" 
         disabled={!userId.trim() || isLoading}
-        className="min-w-[140px] h-12 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md"
+        className="h-12 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md w-full"
       >
         {isLoading ? "Loading..." : "Get Recommendations"}
       </Button>
